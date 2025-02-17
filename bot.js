@@ -1,91 +1,55 @@
-import { Client, GatewayIntentBits } from "discord.js";
-import axios from "axios";
-import cron from "node-cron";
-import dotenv from "dotenv";
-import fs from "fs";
+require('dotenv').config(); // Load environment variables from .env file
+const { Client, GatewayIntentBits } = require('discord.js');
+const fs = require('fs');
 
-dotenv.config();
-
+// Create a new Discord client instance
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.GuildMessageReactions,
-    GatewayIntentBits.GuildMessageReactions,
+    GatewayIntentBits.MessageContent,
   ],
 });
 
-const CHANNEL_ID = "1341182816087707742"; // Discord channel ID
-const FILE_PATH = "progress.json"; // Store last question & completed status
+const channelId = '1341182816087707742';
 
-// Load progress from file
-function loadProgress() {
-  if (!fs.existsSync(FILE_PATH)) {
-    fs.writeFileSync(FILE_PATH, JSON.stringify({ index: 0, completed: {} }));
-  }
-  return JSON.parse(fs.readFileSync(FILE_PATH));
-}
-
-// Save progress to file
-function saveProgress(data) {
-  fs.writeFileSync(FILE_PATH, JSON.stringify(data));
-}
-
-async function fetchNeetCodeProblems() {
+// Function to read questions from the text file
+const readQuestionsFromFile = () => {
   try {
-    const response = await axios.get("https://neetcode.io/api/problems");
-    return response.data; // Adjust if the API response format is different
+    const data = fs.readFileSync('questions.txt', 'utf-8');
+    return data.split('\n').filter(line => line.trim() !== ''); // Remove empty lines
   } catch (error) {
-    console.error("Error fetching problems:", error);
-    return [];
+    console.error('Error reading file:', error);
+    return []; // Return an empty array if there's an error
   }
-}
+};
 
-async function sendNextQuestion() {
-  const problems = await fetchNeetCodeProblems();
-  if (!problems.length) return;
+// When the bot is ready
+client.once('ready', () => {
+  console.log(`Logged in as ${client.user.tag}`);
 
-  let progress = loadProgress();
-  let lastIndex = progress.index;
-  if (lastIndex >= problems.length) lastIndex = 0; // Restart if at the end
-
-  const nextProblem = problems[lastIndex];
-  progress.index = lastIndex + 1;
-  saveProgress(progress);
-
-  const message = `🌟 **Next NeetCode Problem** 🌟\n**${nextProblem.title}**\n🔗 ${nextProblem.link}\n\n✅ React to mark as completed!`;
-
-  const channel = await client.channels.fetch(CHANNEL_ID);
+  const channel = client.channels.cache.get(channelId);
   if (channel) {
-    const sentMessage = await channel.send(message);
-    await sentMessage.react("✅"); // Add the reaction for marking as completed
-
-    // Save message ID to track completions
-    progress.completed[sentMessage.id] = false;
-    saveProgress(progress);
-  }
-}
-
-// Handle reaction events
-client.on("messageReactionAdd", async (reaction, user) => {
-  if (user.bot) return; // Ignore bot reactions
-
-  const progress = loadProgress();
-  if (reaction.emoji.name === "✅" && progress.completed.hasOwnProperty(reaction.message.id)) {
-    progress.completed[reaction.message.id] = true;
-    saveProgress(progress);
-
-    // Edit the message to show completion status
-    const updatedMessage = `${reaction.message.content}\n\n🎉 **Completed by ${user.username}!**`;
-    await reaction.message.edit(updatedMessage);
+    channel.send('Bot is now online and ready to answer!');
+  } else {
+    console.log('Channel not found!');
   }
 });
 
-// Schedule daily at 8 AM UTC
-cron.schedule("0 8 * * *", sendNextQuestion);
+// Listen for messages
+client.on('messageCreate', (message) => {
+  if (message.author.bot) return;
 
-client.once("ready", () => {
-  console.log(`✅ Bot is running as ${client.user.tag}`);
+  if (message.content.toLowerCase() === '!question') {
+    const questions = readQuestionsFromFile();
+    if (questions.length > 0) {
+      const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+      message.reply(randomQuestion);
+    } else {
+      message.reply('Sorry, I couldn\'t find any questions!');
+    }
+  }
 });
 
+// Log in using the bot's token from the .env file
 client.login(process.env.DISCORD_TOKEN);
