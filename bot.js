@@ -1,6 +1,9 @@
-require('dotenv').config(); // Load environment variables from .env file
-const { Client, GatewayIntentBits } = require('discord.js');
-const fs = require('fs');
+import { Client, GatewayIntentBits } from 'discord.js';
+import dotenv from 'dotenv';
+import fs from 'fs';
+
+// Load environment variables from the .env file
+dotenv.config();
 
 // Create a new Discord client instance
 const client = new Client({
