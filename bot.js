@@ -23,7 +23,7 @@ const client = new Client({
   ],
 });
 
-const channelId = '1341182816087707742';
+const channelId = '1341520199110627348';
 
 // File paths
 const progressFilePath = 'progress.json';
