@@ -1,8 +1,9 @@
-import { Client, GatewayIntentBits } from 'discord.js';
+import { Client, GatewayIntentBits, MessageActionRow, MessageButton } from 'discord.js';
 import dotenv from 'dotenv';
 import fs from 'fs';
+import cron from 'node-cron';
 
-// Load environment variables from the .env file
+// Load environment variables from .env file
 dotenv.config();
 
 // Create a new Discord client instance
@@ -11,6 +12,7 @@ const client = new Client({
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
+    GatewayIntentBits.Reactions,
   ],
 });
 
@@ -68,7 +70,60 @@ client.once('ready', () => {
   } else {
     console.log('Channel not found!');
   }
+
+  // Cron job to automatically send the next question at 8 AM every day
+  cron.schedule('0 8 * * *', () => {
+    const channel = client.channels.cache.get(channelId);
+    if (channel) {
+      const questions = readQuestionsFromFile();
+      if (questions.length === 0) {
+        console.log('No questions found!');
+        return;
+      }
+
+      const progress = readProgress();
+      const currentIndex = progress.currentIndex;
+
+      if (currentIndex < questions.length) {
+        const question = questions[currentIndex];
+        sendQuestionWithEmbed(channel, question);
+        updateProgress(currentIndex + 1); // Update the progress for the next question
+      } else {
+        console.log('All questions have been completed!');
+      }
+    } else {
+      console.log('Channel not found!');
+    }
+  });
 });
+
+// Function to send question with styled embed
+const sendQuestionWithEmbed = async (channel, question) => {
+  const currentDate = new Date().toLocaleDateString(); // Format current date
+
+  // Create the embed
+  const embed = {
+    color: 0x0099ff,
+    title: `Current Date: ${currentDate}`,
+    description: `**Question:** ${question}`,
+    fields: [
+      {
+        name: 'Completed By:',
+        value: 'React with ✅ to mark as completed!',
+        inline: true,
+      },
+    ],
+    timestamp: new Date(),
+  };
+
+  // Send the embed message
+  const sentMessage = await channel.send({
+    embeds: [embed],
+  });
+
+  // Add a checkmark emoji reaction
+  await sentMessage.react('✅');
+};
 
 // Listen for messages
 client.on('messageCreate', (message) => {
@@ -90,7 +145,7 @@ client.on('messageCreate', (message) => {
     // Send the current question
     if (currentIndex < questions.length) {
       const question = questions[currentIndex];
-      message.reply(question);
+      sendQuestionWithEmbed(message.channel, question);
       // Update the progress to point to the next question
       updateProgress(currentIndex + 1);
     } else {
@@ -98,7 +153,7 @@ client.on('messageCreate', (message) => {
     }
   }
 
-  // Optional: Handle !question to send the next question in case of multiple commands
+  // If the message is '!question', send the current question of the day
   if (message.content.toLowerCase() === '!question') {
     const questions = readQuestionsFromFile();
     if (questions.length === 0) {
@@ -112,12 +167,47 @@ client.on('messageCreate', (message) => {
 
     if (currentIndex < questions.length) {
       const question = questions[currentIndex];
-      message.reply(question);
-      // Update the progress to point to the next question
-      updateProgress(currentIndex + 1);
+      sendQuestionWithEmbed(message.channel, question);
     } else {
       message.reply('All questions have been completed!');
     }
+  }
+
+  // If the message is '!stop', reset the index to the beginning
+  if (message.content.toLowerCase() === '!stop') {
+    const questions = readQuestionsFromFile();
+    if (questions.length === 0) {
+      message.reply('Sorry, no questions found!');
+      return;
+    }
+
+    // Reset the index to 0 (start from the first question)
+    updateProgress(0);
+
+    // Send the first question
+    sendQuestionWithEmbed(message.channel, questions[0]);
+  }
+});
+
+// Listen for reactions to track completion
+client.on('messageReactionAdd', async (reaction, user) => {
+  // Check if the reaction is the checkmark emoji
+  if (reaction.emoji.name === '✅') {
+    const channel = reaction.message.channel;
+
+    // Retrieve the users who have reacted
+    const usersReacted = await reaction.users.fetch();
+    const userNames = usersReacted
+      .filter((user) => !user.bot)
+      .map((user) => user.username)
+      .join(', ') || 'No one yet';
+
+    // Update the embed with the list of users who reacted
+    const embed = reaction.message.embeds[0];
+    embed.fields[0].value = `Completed By: ${userNames}`;
+
+    // Edit the original message to include the updated embed
+    await reaction.message.edit({ embeds: [embed] });
   }
 });
 
