@@ -1,4 +1,5 @@
-import { Client, GatewayIntentBits } from 'discord.js';
+import pkg from 'discord.js';
+const { Client, GatewayIntentBits, MessageActionRow, MessageButton } = pkg;
 import dotenv from 'dotenv';
 import fs from 'fs';
 import cron from 'node-cron';
