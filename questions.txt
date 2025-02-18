@@ -1,150 +1,150 @@
-Contains Duplicate   	
-Valid Anagram   	
-Two Sum   	
-Group Anagrams   	
-Top K Frequent Elements   	
-Encode and Decode Strings   	
-Product of Array Except Self   	
-Valid Sudoku   	
-Longest Consecutive Sequence   	
-Valid Palindrome   	
-Two Sum II Input Array Is Sorted   	
-3Sum   	
-Container With Most Water   	
-Trapping Rain Water   	
-Best Time to Buy And Sell Stock   	
-Longest Substring Without Repeating Characters   	
-Longest Repeating Character Replacement   	
-Permutation In String   	
-Minimum Window Substring   	
-Sliding Window Maximum   	
-Valid Parentheses   	
-Min Stack   	
-Evaluate Reverse Polish Notation   	
-Generate Parentheses   	
-Daily Temperatures   	
-Car Fleet   	
-Largest Rectangle In Histogram   	
-Binary Search   	
-Search a 2D Matrix   	
-Koko Eating Bananas   	
-Find Minimum In Rotated Sorted Array   	
-Search In Rotated Sorted Array   	
-Time Based Key Value Store   	
-Median of Two Sorted Arrays   	
-Reverse Linked List   	
-Merge Two Sorted Lists   	
-Linked List Cycle   	
-Reorder List   	
-Remove Nth Node From End of List   	
-Copy List With Random Pointer   	
-Add Two Numbers   	
-Find The Duplicate Number   	
-LRU Cache   	
-Merge K Sorted Lists   	
-Reverse Nodes In K Group   	
-Invert Binary Tree   	
-Maximum Depth of Binary Tree   	
-Diameter of Binary Tree   	
-Balanced Binary Tree   	
-Same Tree   	
-Subtree of Another Tree   	
-Lowest Common Ancestor of a Binary Search Tree   	
-Binary Tree Level Order Traversal   	
-Binary Tree Right Side View   	
-Count Good Nodes In Binary Tree   	
-Validate Binary Search Tree   	
-Kth Smallest Element In a Bst   	
-Construct Binary Tree From Preorder And Inorder Traversal   	
-Binary Tree Maximum Path Sum   	
-Serialize And Deserialize Binary Tree   	
-Kth Largest Element In a Stream   	
-Last Stone Weight   	
-K Closest Points to Origin   	
-Kth Largest Element In An Array   	
-Task Scheduler   	
-Design Twitter   	
-Find Median From Data Stream   	
-Subsets   	
-Combination Sum   	
-Combination Sum II   	
-Permutations   	
-Subsets II   	
-Word Search   	
-Palindrome Partitioning   	
-Letter Combinations of a Phone Number   	
-N Queens   	
-Implement Trie Prefix Tree   	
-Design Add And Search Words Data Structure   	
-Word Search II   	
-Number of Islands   	
-Max Area of Island   	
-Clone Graph   	
-Walls And Gates   	
-Rotting Oranges   	
-Pacific Atlantic Water Flow   	
-Surrounded Regions   	
-Course Schedule   	
-Course Schedule II   	
-Graph Valid Tree   	
-Number of Connected Components In An Undirected Graph   	
-Redundant Connection   	
-Word Ladder   	
-Network Delay Time   	
-Reconstruct Itinerary   	
-Min Cost to Connect All Points   	
-Swim In Rising Water   	
-Alien Dictionary   	
-Cheapest Flights Within K Stops   	
-Climbing Stairs   	
-Min Cost Climbing Stairs   	
-House Robber   	
-House Robber II   	
-Longest Palindromic Substring   	
-Palindromic Substrings   	
-Decode Ways   	
-Coin Change   	
-Maximum Product Subarray   	
-Word Break   	
-Longest Increasing Subsequence   	
-Partition Equal Subset Sum   	
-Unique Paths   	
-Longest Common Subsequence   	
-Best Time to Buy And Sell Stock With Cooldown   	
-Coin Change II   	
-Target Sum   	
-Interleaving String   	
-Longest Increasing Path In a Matrix   	
-Distinct Subsequences   	
-Edit Distance   	
-Burst Balloons   	
-Regular Expression Matching   	
-Maximum Subarray   	
-Jump Game   	
-Jump Game II   	
-Gas Station   	
-Hand of Straights   	
-Merge Triplets to Form Target Triplet   	
-Partition Labels   	
-Valid Parenthesis String   	
-Insert Interval   	
-Merge Intervals   	
-Non Overlapping Intervals   	
-Meeting Rooms   	
-Meeting Rooms II   	
-Minimum Interval to Include Each Query   	
-Rotate Image   	
-Spiral Matrix   	
-Set Matrix Zeroes   	
-Happy Number   	
-Plus One   	
-Pow(x, n)   	
-Multiply Strings   	
-Detect Squares   	
-Single Number   	
-Number of 1 Bits   	
-Counting Bits   	
-Reverse Bits   	
-Missing Number   	
-Sum of Two Integers   	
-Reverse Integer
+Contains Duplicate - easy  
+Valid Anagram - easy  
+Two Sum - easy  
+Group Anagrams - medium  
+Top K Frequent Elements - medium  
+Encode and Decode Strings - medium  
+Product of Array Except Self - medium  
+Valid Sudoku - medium  
+Longest Consecutive Sequence - medium  
+Valid Palindrome - easy  
+Two Sum II Input Array Is Sorted - medium  
+3Sum - medium  
+Container With Most Water - medium  
+Trapping Rain Water - hard  
+Best Time to Buy And Sell Stock - easy  
+Longest Substring Without Repeating Characters - medium  
+Longest Repeating Character Replacement - medium  
+Permutation In String - medium  
+Minimum Window Substring - hard  
+Sliding Window Maximum - hard  
+Valid Parentheses - easy  
+Min Stack - medium  
+Evaluate Reverse Polish Notation - medium  
+Generate Parentheses - medium  
+Daily Temperatures - medium  
+Car Fleet - medium  
+Largest Rectangle In Histogram - hard  
+Binary Search - easy  
+Search a 2D Matrix - medium  
+Koko Eating Bananas - medium  
+Find Minimum In Rotated Sorted Array - medium  
+Search In Rotated Sorted Array - medium  
+Time Based Key Value Store - medium  
+Median of Two Sorted Arrays - hard  
+Reverse Linked List - easy  
+Merge Two Sorted Lists - easy  
+Linked List Cycle - easy  
+Reorder List - medium  
+Remove Nth Node From End of List - medium  
+Copy List With Random Pointer - medium  
+Add Two Numbers - medium  
+Find The Duplicate Number - medium  
+LRU Cache - medium  
+Merge K Sorted Lists - hard  
+Reverse Nodes In K Group - hard  
+Invert Binary Tree - easy  
+Maximum Depth of Binary Tree - easy  
+Diameter of Binary Tree - easy  
+Balanced Binary Tree - easy  
+Same Tree - easy  
+Subtree of Another Tree - easy  
+Lowest Common Ancestor of a Binary Search Tree - medium  
+Binary Tree Level Order Traversal - medium  
+Binary Tree Right Side View - medium  
+Count Good Nodes In Binary Tree - medium  
+Validate Binary Search Tree - medium  
+Kth Smallest Element In a Bst - medium  
+Construct Binary Tree From Preorder And Inorder Traversal - medium  
+Binary Tree Maximum Path Sum - hard  
+Serialize And Deserialize Binary Tree - hard  
+Kth Largest Element In a Stream - easy  
+Last Stone Weight - easy  
+K Closest Points to Origin - medium  
+Kth Largest Element In An Array - medium  
+Task Scheduler - medium  
+Design Twitter - medium  
+Find Median From Data Stream - hard  
+Subsets - medium  
+Combination Sum - medium  
+Combination Sum II - medium  
+Permutations - medium  
+Subsets II - medium  
+Word Search - medium  
+Palindrome Partitioning - medium  
+Letter Combinations of a Phone Number - medium  
+N Queens - hard  
+Implement Trie Prefix Tree - medium  
+Design Add And Search Words Data Structure - medium  
+Word Search II - hard  
+Number of Islands - medium  
+Max Area of Island - medium  
+Clone Graph - medium  
+Walls And Gates - medium  
+Rotting Oranges - medium  
+Pacific Atlantic Water Flow - medium  
+Surrounded Regions - medium  
+Course Schedule - medium  
+Course Schedule II - medium  
+Graph Valid Tree - medium  
+Number of Connected Components In An Undirected Graph - medium  
+Redundant Connection - medium  
+Word Ladder - hard  
+Network Delay Time - medium  
+Reconstruct Itinerary - hard  
+Min Cost to Connect All Points - medium  
+Swim In Rising Water - hard  
+Alien Dictionary - hard  
+Cheapest Flights Within K Stops - medium  
+Climbing Stairs - easy  
+Min Cost Climbing Stairs - easy  
+House Robber - medium  
+House Robber II - medium  
+Longest Palindromic Substring - medium  
+Palindromic Substrings - medium  
+Decode Ways - medium  
+Coin Change - medium  
+Maximum Product Subarray - medium  
+Word Break - medium  
+Longest Increasing Subsequence - medium  
+Partition Equal Subset Sum - medium  
+Unique Paths - medium  
+Longest Common Subsequence - medium  
+Best Time to Buy And Sell Stock With Cooldown - medium  
+Coin Change II - medium  
+Target Sum - medium  
+Interleaving String - medium  
+Longest Increasing Path In a Matrix - hard  
+Distinct Subsequences - hard  
+Edit Distance - medium  
+Burst Balloons - hard  
+Regular Expression Matching - hard  
+Maximum Subarray - medium  
+Jump Game - medium  
+Jump Game II - medium  
+Gas Station - medium  
+Hand of Straights - medium  
+Merge Triplets to Form Target Triplet - medium  
+Partition Labels - medium  
+Valid Parenthesis String - medium  
+Insert Interval - medium  
+Merge Intervals - medium  
+Non Overlapping Intervals - medium  
+Meeting Rooms - easy  
+Meeting Rooms II - medium  
+Minimum Interval to Include Each Query - hard  
+Rotate Image - medium  
+Spiral Matrix - medium  
+Set Matrix Zeroes - medium  
+Happy Number - easy  
+Plus One - easy  
+Pow(x, n) - medium  
+Multiply Strings - medium  
+Detect Squares - medium  
+Single Number - easy  
+Number of 1 Bits - easy  
+Counting Bits - easy  
+Reverse Bits - easy  
+Missing Number - easy  
+Sum of Two Integers - medium  
+Reverse Integer - medium  

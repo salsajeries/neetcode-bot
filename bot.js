@@ -1,5 +1,5 @@
 import pkg from 'discord.js';
-const { Client, GatewayIntentBits, MessageActionRow, MessageButton } = pkg;
+const { Client, GatewayIntentBits, Partials } = pkg;
 import dotenv from 'dotenv';
 import fs from 'fs';
 import cron from 'node-cron';
@@ -11,9 +11,15 @@ dotenv.config();
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,    
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
-    GatewayIntentBits.Reactions,
+    GatewayIntentBits.GuildMessageReactions
+  ],
+  partials: [
+    Partials.Channel,
+    Partials.Message,
+    Partials.Reactions
   ],
 });
 
@@ -22,6 +28,9 @@ const channelId = '1341182816087707742';
 // File paths
 const progressFilePath = 'progress.json';
 const questionsFilePath = 'questions.txt';
+
+// Variable to store the cron job
+let scheduledJob;
 
 // Function to read questions from the text file
 const readQuestionsFromFile = () => {
@@ -60,6 +69,20 @@ const updateProgress = (index) => {
   }
 };
 
+// Function to get the color based on difficulty
+const getColorByDifficulty = (difficulty) => {
+  switch (difficulty.toLowerCase().trim()) {
+    case 'easy':
+      return 0x00ff00; // Green
+    case 'medium':
+      return 0xffff00; // Yellow
+    case 'hard':
+      return 0xff0000; // Red
+    default:
+      return 0x0099ff; // Default color
+  }
+};
+
 // When the bot is ready
 client.once('ready', () => {
   console.log(`Logged in as ${client.user.tag}`);
@@ -73,7 +96,7 @@ client.once('ready', () => {
   }
 
   // Cron job to automatically send the next question at 8 AM every day
-  cron.schedule('0 8 * * *', () => {
+  scheduledJob = cron.schedule('0 8 * * *', () => {
     const channel = client.channels.cache.get(channelId);
     if (channel) {
       const questions = readQuestionsFromFile();
@@ -86,8 +109,11 @@ client.once('ready', () => {
       const currentIndex = progress.currentIndex;
 
       if (currentIndex < questions.length) {
-        const question = questions[currentIndex];
-        sendQuestionWithEmbed(channel, question);
+        const questionData = questions[currentIndex].split(' - ');
+        const question = questionData[0];
+        const difficulty = questionData[1];
+        const color = getColorByDifficulty(difficulty);
+        sendQuestionWithEmbed(channel, question, difficulty, color);
         updateProgress(currentIndex + 1); // Update the progress for the next question
       } else {
         console.log('All questions have been completed!');
@@ -99,19 +125,24 @@ client.once('ready', () => {
 });
 
 // Function to send question with styled embed
-const sendQuestionWithEmbed = async (channel, question) => {
+const sendQuestionWithEmbed = async (channel, question, difficulty, color) => {
   const currentDate = new Date().toLocaleDateString(); // Format current date
 
   // Create the embed
   const embed = {
-    color: 0x0099ff,
-    title: `Current Date: ${currentDate}`,
-    description: `**Question:** ${question}`,
+    color: color,
+    title: `**Question:** ${question}`,
+    description: `Current Date: ${currentDate}`,
     fields: [
+      {
+        name: `Difficulty: ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`,
+        value: "",
+        inline: false,
+      },
       {
         name: 'Completed By:',
         value: 'React with ✅ to mark as completed!',
-        inline: true,
+        inline: false,
       },
     ],
     timestamp: new Date(),
@@ -131,7 +162,7 @@ client.on('messageCreate', (message) => {
   // Ignore bot messages
   if (message.author.bot) return;
 
-  // If the message is '!start', start sending the questions
+  // If the message is '!start', reset progress and start sending the questions
   if (message.content.toLowerCase() === '!start') {
     const questions = readQuestionsFromFile();
     if (questions.length === 0) {
@@ -139,43 +170,19 @@ client.on('messageCreate', (message) => {
       return;
     }
 
-    // Get the current question index
-    const progress = readProgress();
-    const currentIndex = progress.currentIndex;
-
-    // Send the current question
-    if (currentIndex < questions.length) {
-      const question = questions[currentIndex];
-      sendQuestionWithEmbed(message.channel, question);
-      // Update the progress to point to the next question
-      updateProgress(currentIndex + 1);
-    } else {
-      message.reply('All questions have been completed!');
-    }
+    // Reset progress to point to the first question
+    updateProgress(0);
+    
+    // Send the first question
+    const questionData = questions[0].split(' - ');
+    const question = questionData[0];
+    const difficulty = questionData[1];
+    const color = getColorByDifficulty(difficulty);
+    sendQuestionWithEmbed(message.channel, question, difficulty, color);
   }
 
-  // If the message is '!question', send the current question of the day
-  if (message.content.toLowerCase() === '!question') {
-    const questions = readQuestionsFromFile();
-    if (questions.length === 0) {
-      message.reply('Sorry, no questions found!');
-      return;
-    }
-
-    // Get the current question index
-    const progress = readProgress();
-    const currentIndex = progress.currentIndex;
-
-    if (currentIndex < questions.length) {
-      const question = questions[currentIndex];
-      sendQuestionWithEmbed(message.channel, question);
-    } else {
-      message.reply('All questions have been completed!');
-    }
-  }
-
-  // If the message is '!stop', reset the index to the beginning
-  if (message.content.toLowerCase() === '!stop') {
+  // If the message is '!restart', reset the index to the beginning
+  if (message.content.toLowerCase() === '!restart') {
     const questions = readQuestionsFromFile();
     if (questions.length === 0) {
       message.reply('Sorry, no questions found!');
@@ -186,7 +193,69 @@ client.on('messageCreate', (message) => {
     updateProgress(0);
 
     // Send the first question
-    sendQuestionWithEmbed(message.channel, questions[0]);
+    message.reply('Questions have been reset. Starting from the first question.');
+    const questionData = questions[0].split(' - ');
+    const question = questionData[0];
+    const difficulty = questionData[1];
+    const color = getColorByDifficulty(difficulty);
+    sendQuestionWithEmbed(message.channel, question, difficulty, color);
+  }
+
+  // If the message is '!next', send the next question
+  if (message.content.toLowerCase() === '!next') {
+    const questions = readQuestionsFromFile();
+    if (questions.length === 0) {
+      message.reply('Sorry, no questions found!');
+      return;
+    }
+
+    const progress = readProgress();
+    const currentIndex = progress.currentIndex + 1; // Move to the next question
+
+    if (currentIndex < questions.length) {
+      const questionData = questions[currentIndex].split(' - ');
+      const question = questionData[0];
+      const difficulty = questionData[1];
+      const color = getColorByDifficulty(difficulty);
+      updateProgress(currentIndex);
+      sendQuestionWithEmbed(message.channel, question, difficulty, color);
+    } else {
+      message.reply('No more questions available!');
+    }
+  }
+
+  // If the message is '!back', send the previous question
+  if (message.content.toLowerCase() === '!back') {
+    const questions = readQuestionsFromFile();
+    if (questions.length === 0) {
+      message.reply('Sorry, no questions found!');
+      return;
+    }
+
+    const progress = readProgress();
+    const currentIndex = progress.currentIndex - 1; // Move to the previous question
+
+    if (currentIndex >= 0) {
+      const questionData = questions[currentIndex].split(' - ');
+      const question = questionData[0];
+      const difficulty = questionData[1];
+      const color = getColorByDifficulty(difficulty);
+      updateProgress(currentIndex);
+      sendQuestionWithEmbed(message.channel, question, difficulty, color);
+    } else {
+      message.reply('You are already at the first question!');
+    }
+  }
+
+  // If the message is '!stop', stop the cron job
+  if (message.content.toLowerCase() === '!stop') {
+    // Stop the cron job
+    if (scheduledJob) {
+      scheduledJob.stop();
+      message.reply('The daily questions have been stopped.');
+    } else {
+      message.reply('No scheduled job was found.');
+    }
   }
 });
 
@@ -201,11 +270,33 @@ client.on('messageReactionAdd', async (reaction, user) => {
     const userNames = usersReacted
       .filter((user) => !user.bot)
       .map((user) => user.username)
-      .join(', ') || 'No one yet';
+      .join(', ') || 'React with ✅ to mark as completed!';
 
     // Update the embed with the list of users who reacted
     const embed = reaction.message.embeds[0];
-    embed.fields[0].value = `Completed By: ${userNames}`;
+    embed.fields[1].value = `${userNames}`;
+
+    // Edit the original message to include the updated embed
+    await reaction.message.edit({ embeds: [embed] });
+  }
+});
+
+// Listen for reaction removal to update the completion list
+client.on('messageReactionRemove', async (reaction, user) => {
+  // Check if the reaction is the checkmark emoji
+  if (reaction.emoji.name === '✅') {
+    const channel = reaction.message.channel;
+
+    // Retrieve the users who have reacted
+    const usersReacted = await reaction.users.fetch();
+    const userNames = usersReacted
+      .filter((user) => !user.bot)
+      .map((user) => user.username)
+      .join(', ') || 'React with ✅ to mark as completed!';
+
+    // Update the embed with the list of users who reacted
+    const embed = reaction.message.embeds[0];
+    embed.fields[1].value = `${userNames}`;
 
     // Edit the original message to include the updated embed
     await reaction.message.edit({ embeds: [embed] });
