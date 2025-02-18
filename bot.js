@@ -113,7 +113,8 @@ client.once('ready', () => {
         const question = questionData[0];
         const difficulty = questionData[1];
         const color = getColorByDifficulty(difficulty);
-        sendQuestionWithEmbed(channel, question, difficulty, color);
+        const day = currentIndex + 1;
+        sendQuestionWithEmbed(channel, question, difficulty, color, day);
         updateProgress(currentIndex + 1); // Update the progress for the next question
       } else {
         console.log('All questions have been completed!');
@@ -125,13 +126,13 @@ client.once('ready', () => {
 });
 
 // Function to send question with styled embed
-const sendQuestionWithEmbed = async (channel, question, difficulty, color) => {
+const sendQuestionWithEmbed = async (channel, question, difficulty, color, day) => {
   const currentDate = new Date().toLocaleDateString(); // Format current date
 
   // Create the embed
   const embed = {
     color: color,
-    title: `**Question:** ${question}`,
+    title: `**Question #${day}:** ${question}`,
     description: `Current Date: ${currentDate}`,
     fields: [
       {
@@ -178,7 +179,8 @@ client.on('messageCreate', (message) => {
     const question = questionData[0];
     const difficulty = questionData[1];
     const color = getColorByDifficulty(difficulty);
-    sendQuestionWithEmbed(message.channel, question, difficulty, color);
+    const day = 1;
+    sendQuestionWithEmbed(message.channel, question, difficulty, color, day);
   }
 
   // If the message is '!restart', reset the index to the beginning
@@ -198,7 +200,8 @@ client.on('messageCreate', (message) => {
     const question = questionData[0];
     const difficulty = questionData[1];
     const color = getColorByDifficulty(difficulty);
-    sendQuestionWithEmbed(message.channel, question, difficulty, color);
+    const day = 1;
+    sendQuestionWithEmbed(message.channel, question, difficulty, color, day);
   }
 
   // If the message is '!next', send the next question
@@ -217,8 +220,9 @@ client.on('messageCreate', (message) => {
       const question = questionData[0];
       const difficulty = questionData[1];
       const color = getColorByDifficulty(difficulty);
+      const day = currentIndex + 1;
       updateProgress(currentIndex);
-      sendQuestionWithEmbed(message.channel, question, difficulty, color);
+      sendQuestionWithEmbed(message.channel, question, difficulty, color, day);
     } else {
       message.reply('No more questions available!');
     }
@@ -240,8 +244,9 @@ client.on('messageCreate', (message) => {
       const question = questionData[0];
       const difficulty = questionData[1];
       const color = getColorByDifficulty(difficulty);
+      const day = currentIndex + 1;
       updateProgress(currentIndex);
-      sendQuestionWithEmbed(message.channel, question, difficulty, color);
+      sendQuestionWithEmbed(message.channel, question, difficulty, color, day);
     } else {
       message.reply('You are already at the first question!');
     }
